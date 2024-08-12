@@ -5,14 +5,14 @@ import com.seonpt.researcher.common.entity.SimpleUser;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Repository
+@Transactional
 public class SimpleRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -32,6 +32,27 @@ public class SimpleRepository {
         return jdbcTemplate.query(sql, simpleUserRowMapper);
     }
 
+    public SimpleUser findById(Long id){
+        String sql = "SELECT * FROM SIMPLE_USERS WHERE ID=?";
+
+        return jdbcTemplate.queryForObject(sql, simpleUserRowMapper, id);
+    }
+
+    public void update(long id, String name){
+        String sql = "UPDATE SIMPLE_USERS SET name=? WHERE id = ?";
+
+        jdbcTemplate.update(sql, name, id);
+    }
+
+    public void delete(long id){
+        String sql = "DELETE FROM SIMPLE_USERS WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+
+    public void deleteAll(){
+        String sql = "DELETE FROM SIMPLE_USERS";
+        jdbcTemplate.update(sql);
+    }
 
     private class SimpleUserRowMapper implements RowMapper<SimpleUser>{
         @Override
